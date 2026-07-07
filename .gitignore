@@ -1,0 +1,23 @@
+# Virtual Environment
+venv/
+
+# Ignore trained model files
+model/model.pkl
+model/symptoms.pkl
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# VS Code
+.vscode/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
