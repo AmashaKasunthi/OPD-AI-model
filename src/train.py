@@ -49,8 +49,11 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 # Train model
 model = RandomForestClassifier(
-    n_estimators=200,
-    random_state=42
+    n_estimators=500,
+    random_state=42,
+    max_depth=None,
+    min_samples_split=2,
+    min_samples_leaf=1
 )
 
 model.fit(X_train, y_train)
