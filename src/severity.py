@@ -1,30 +1,41 @@
 import pandas as pd
 
+# Load symptom severity file
 severity_df = pd.read_csv("../dataset/Symptom-severity.csv")
 
-severity_map = dict(
-    zip(
-        severity_df["Symptom"].str.strip(),
-        severity_df["weight"]
-    )
-)
+# Remove spaces from symptom names
+severity_df["Symptom"] = severity_df["Symptom"].str.strip()
+
+# Create dictionary
+severity_map = dict(zip(
+    severity_df["Symptom"],
+    severity_df["weight"]
+))
+
 
 def calculate_severity(symptoms):
 
-    total_score = 0
+    score = 0
+
+    # If symptoms come as a string
+    if isinstance(symptoms, str):
+        symptoms = symptoms.split(",")
 
     for symptom in symptoms:
-        total_score += severity_map.get(symptom.strip(), 0)
 
-    return total_score
+        symptom = symptom.strip()
+
+        score += severity_map.get(symptom, 0)
+
+    return score
 
 
 def get_risk_level(score):
 
-    if score < 10:
+    if score <= 6:
         return "Low"
 
-    elif score < 20:
+    elif score <= 12:
         return "Medium"
 
     else:
