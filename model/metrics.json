@@ -1,0 +1,8 @@
+{
+    "best_model": "Random Forest",
+    "training_accuracy": 100.0,
+    "testing_accuracy": 100.0,
+    "precision": 100.0,
+    "recall": 100.0,
+    "f1_score": 100.0
+}
