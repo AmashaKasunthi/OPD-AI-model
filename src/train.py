@@ -1,5 +1,6 @@
 import pandas as pd
 import joblib
+import json
 
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.ensemble import RandomForestClassifier
@@ -209,3 +210,33 @@ print("Selected Model :", best_name)
 print(f"Best Accuracy  : {best_accuracy*100:.2f}%")
 print("Model Saved Successfully")
 print("======================================")
+
+# =====================================
+# Save Model Metrics
+# =====================================
+
+metrics = {
+    "best_model": best_name,
+    "training_accuracy": round(
+        rf_train_acc * 100 if best_name == "Random Forest" else lgbm_train_acc * 100,
+        2
+    ),
+    "testing_accuracy": round(best_accuracy * 100, 2),
+    "precision": round(
+        rf_precision * 100 if best_name == "Random Forest" else lgbm_precision * 100,
+        2
+    ),
+    "recall": round(
+        rf_recall * 100 if best_name == "Random Forest" else lgbm_recall * 100,
+        2
+    ),
+    "f1_score": round(
+        rf_f1 * 100 if best_name == "Random Forest" else lgbm_f1 * 100,
+        2
+    )
+}
+
+with open("../model/metrics.json", "w") as f:
+    json.dump(metrics, f, indent=4)
+
+print("Metrics Saved Successfully")
