@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 import joblib
 import re
+from flask import Flask, request, jsonify
+import re
 
 from severity import calculate_severity, get_risk_level
 from disease_info import get_description, get_precautions
@@ -10,6 +12,24 @@ app = Flask(__name__)
 # Load trained model
 model = joblib.load("../model/model.pkl")
 mlb = joblib.load("../model/symptoms.pkl")
+
+import json
+
+with open("../model/metrics.json", "r") as f:
+    metrics = json.load(f)
+
+print("\n========== MODEL INFORMATION ==========")
+print("Best Model       :", metrics["best_model"])
+print("Training Accuracy:", metrics["training_accuracy"], "%")
+print("Testing Accuracy :", metrics["testing_accuracy"], "%")
+print("Precision        :", metrics["precision"], "%")
+print("Recall           :", metrics["recall"], "%")
+print("F1 Score         :", metrics["f1_score"], "%")
+print("=======================================\n")
+
+@app.route("/model_metrics", methods=["GET"])
+def model_metrics():
+    return jsonify(metrics)
 
 
 @app.route("/predict", methods=["POST"])
@@ -101,3 +121,4 @@ def home():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
