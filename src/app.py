@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify
 import joblib
 import re
 from flask import Flask, request, jsonify
-import re
 
 from severity import calculate_severity, get_risk_level
 from disease_info import get_description, get_precautions
