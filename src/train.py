@@ -1,6 +1,7 @@
 import pandas as pd
 import joblib
 import json
+import time
 
 from sklearn.preprocessing import MultiLabelBinarizer
 from sklearn.ensemble import RandomForestClassifier
@@ -24,6 +25,44 @@ print("======================================")
 print("Dataset Loaded Successfully")
 print("======================================")
 print(df.head())
+
+print("\n======================================")
+print("DATASET ANALYSIS")
+print("======================================")
+
+print(f"Dataset Shape : {df.shape}")
+
+print("\nDataset Information")
+df.info()
+
+# =====================================
+# Missing Value Analysis
+# =====================================
+print("\n======================================")
+print("MISSING VALUE ANALYSIS")
+print("======================================")
+
+missing_values = df.isnull().sum()
+
+print(missing_values)
+print("\nTotal Missing Values :", missing_values.sum())
+
+if missing_values.sum() == 0:
+    print(" No missing values found in the dataset.")
+else:
+    print(" Missing values detected.")
+
+# Duplicate Records
+print("\nDuplicate Records :", df.duplicated().sum())
+
+# Disease Distribution
+print("\nDisease Distribution")
+print(df["Disease"].value_counts())
+
+# Remove Duplicate Records
+df = df.drop_duplicates()
+
+print("\nDataset Shape After Removing Duplicates :", df.shape)
 
 # =====================================
 # Get Symptom Columns
@@ -64,7 +103,8 @@ X_train, X_test, y_train, y_test = train_test_split(
     X,
     y,
     test_size=0.2,
-    random_state=42
+    random_state=42,
+     stratify=y
 )
 ############### RANDOM FOREST ###########################
 
@@ -80,7 +120,9 @@ rf_model = RandomForestClassifier(
     min_samples_leaf=1
 )
 
+start = time.time()
 rf_model.fit(X_train, y_train)
+rf_time = time.time() - start
 
 rf_train_pred = rf_model.predict(X_train)
 rf_test_pred = rf_model.predict(X_test)
@@ -108,7 +150,7 @@ rf_f1 = f1_score(
     average="weighted",
     zero_division=0
 )
-
+print(f"Training Time   : {rf_time:.3f} seconds")
 print(f"Training Accuracy : {rf_train_acc*100:.2f}%")
 print(f"Testing Accuracy  : {rf_test_acc*100:.2f}%")
 print(f"Precision         : {rf_precision*100:.2f}%")
@@ -128,10 +170,13 @@ print("======================================")
 
 lgbm_model = LGBMClassifier(
     n_estimators=500,
-    random_state=42
+    random_state=42,
+    verbose=-1
 )
 
+start = time.time()
 lgbm_model.fit(X_train, y_train)
+lgbm_time = time.time() - start
 
 lgbm_train_pred = lgbm_model.predict(X_train)
 lgbm_test_pred = lgbm_model.predict(X_test)
@@ -159,7 +204,7 @@ lgbm_f1 = f1_score(
     average="weighted",
     zero_division=0
 )
-
+print(f"Training Time   : {lgbm_time:.3f} seconds")
 print(f"Training Accuracy : {lgbm_train_acc*100:.2f}%")
 print(f"Testing Accuracy  : {lgbm_test_acc*100:.2f}%")
 print(f"Precision         : {lgbm_precision*100:.2f}%")
@@ -178,13 +223,14 @@ print("MODEL COMPARISON")
 print("======================================")
 
 print(f"{'Metric':<25}{'Random Forest':<20}{'LightGBM'}")
-print("-"*60)
+print("-" * 70)
 
 print(f"{'Training Accuracy':<25}{rf_train_acc*100:<20.2f}{lgbm_train_acc*100:.2f}")
 print(f"{'Testing Accuracy':<25}{rf_test_acc*100:<20.2f}{lgbm_test_acc*100:.2f}")
 print(f"{'Precision':<25}{rf_precision*100:<20.2f}{lgbm_precision*100:.2f}")
 print(f"{'Recall':<25}{rf_recall*100:<20.2f}{lgbm_recall*100:.2f}")
 print(f"{'F1 Score':<25}{rf_f1*100:<20.2f}{lgbm_f1*100:.2f}")
+print(f"{'Training Time (s)':<25}{rf_time:<20.3f}{lgbm_time:.3f}")
 
 ################ SAVE BEST MODEL #########################
 
@@ -233,6 +279,10 @@ metrics = {
     "f1_score": round(
         rf_f1 * 100 if best_name == "Random Forest" else lgbm_f1 * 100,
         2
+    ),
+    "training_time": round(
+        rf_time if best_name == "Random Forest" else lgbm_time,
+        3
     )
 }
 
