@@ -24,6 +24,7 @@ print("Testing Accuracy :", metrics["testing_accuracy"], "%")
 print("Precision        :", metrics["precision"], "%")
 print("Recall           :", metrics["recall"], "%")
 print("F1 Score         :", metrics["f1_score"], "%")
+print("Training Time    :", metrics["training_time"], "seconds")
 print("=======================================\n")
 
 @app.route("/model_metrics", methods=["GET"])
