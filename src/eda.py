@@ -244,4 +244,4 @@ plt.savefig(f"{graph_folder}/symptoms_per_patient.png")
 
 plt.show()
 
-print("Symptoms Per Patient Histogram Saved.")
+print("Symptoms Per Patient Histogram Saved")
